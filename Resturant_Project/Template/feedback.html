@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% block class %}class="sub_page"{% endblock class %}
+{% block feedback_status %}active{% endblock feedback_status %}
+{% block main %}
+
+  <!-- start feedback form -->
+  <section class="feedback_section layout_padding">
+    <div class="container">
+      <div class="heading_container">
+        <h2>
+          Share Your Feedback
+        </h2>
+        <p>We'd love to hear about your dining experience with us!</p>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-md-8">
+          <div class="form_container">
+            <form action="{% url 'Feedback_Form' %}" method='POST' enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group">
+                <input type="text" class="form-control" name="user_name" required placeholder="Your Name" />
+              </div>
+              <div class="form-group">
+                <textarea class="form-control" id="feedbackDescription" name="description" rows="4" required 
+                  placeholder="Tell us about your experience..."></textarea>
+              </div>
+              <div class="form-group">
+                <select class="form-control nice-select wide" required name="rating">
+                  <option value="" disabled selected>Please rate your experience</option>
+                  <option value="5">5 - Excellent</option>
+                  <option value="4">4 - Very Good</option>
+                  <option value="3">3 - Good</option>
+                  <option value="2">2 - Fair</option>
+                  <option value="1">1 - Poor</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="feedbackImage" class="form-label">Share a photo (optional)</label>
+                <input class="form-control form-control-lg" id="feedbackImage" name="feedback_image" type="file" accept="image/*">
+              </div>
+              <div class="btn_box text-center mt-4">
+                <button type="submit" class="btn btn-primary">
+                  Submit Feedback
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- end feedback form -->
+
+{% endblock main %}

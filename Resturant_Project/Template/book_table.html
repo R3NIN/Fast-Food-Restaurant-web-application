@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block class %}class="sub_page"{% endblock class %}
+{% block table_status %}active{% endblock table_status %}
+{% block main %}
+  <!-- book section -->
+  <section class="book_section layout_padding">
+    <div class="container">
+      <div class="heading_container">
+        <h2>
+          Book A Table
+        </h2>
+      </div>
+      
+      <!-- Messages -->
+      {% if messages %}
+      <div class="container">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form_container">
+            <form action="{% url 'Book_Table' %}" method="post" id="bookingForm" novalidate>
+              {% csrf_token %}
+              <div>
+                <input type="text" class="form-control" name="user_name" placeholder="Your Name" required value="{{ request.POST.user_name|default:'' }}" />
+              </div>
+              <div>
+                <input type="tel" class="form-control" name="phone_number" placeholder="Phone Number" required pattern="[0-9]{10}" title="Please enter a 10-digit number" value="{{ request.POST.phone_number|default:'' }}" />
+              </div>
+              <div>
+                <input type="email" class="form-control" name="user_email" placeholder="Your Email" required value="{{ request.POST.user_email|default:'' }}" />
+              </div>
+              <div>
+                <select class="form-control nice-select wide" name="total_person" required>
+                  <option value="" disabled {% if not request.POST.total_person %}selected{% endif %}>How many persons?</option>
+                  {% for i in '2345'|make_list %}
+                  <option value="{{ i }}" {% if request.POST.total_person == i|stringformat:'s' %}selected{% endif %}>
+                    {{ i }} person{% if i != '1' %}s{% endif %}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div>
+                <input type="date" class="form-control" name="booking_date" required value="{{ request.POST.booking_date|default:'' }}" min="{{ today|date:'Y-m-d' }}" />
+              </div>
+              <div class="btn_box">
+                <button type="submit">
+                  Book Now
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="map_container ">
+            <div id="googleMap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- end book section -->
+
+  <script>
+    // Debug form submission
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+      console.log('Form submitted!');
+      console.log('Form data:', new FormData(this));
+      
+      const phoneInput = this.querySelector('input[name="phone_number"]');
+      if (phoneInput && !/^\d{10}$/.test(phoneInput.value)) {
+        e.preventDefault();
+        console.log('Phone validation failed');
+        alert('Please enter a valid 10-digit phone number.');
+      } else {
+        console.log('Form validation passed, submitting...');
+      }
+    });
+    
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+      $('.alert').fadeOut('slow');
+    }, 5000);
+  </script>
+{% endblock main %}

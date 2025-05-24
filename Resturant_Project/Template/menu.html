@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block class %}class="sub_page"{% endblock class %}
+{% block menu_status %}active{% endblock menu_status %}
+{% load static %}
+
+{% block main %}
+  <!-- food section -->
+  <section class="food_section layout_padding-bottom">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>Our Menu</h2>
+      </div>
+
+      <ul class="filters_menu">
+        <li class="active" data-filter="*">All</li>
+        {% for category in list %}
+        <li data-filter=".{{ category.Category_name|lower|slugify }}">{{ category.Category_name }}</li>
+        {% endfor %}
+      </ul>
+
+      <div class="filters-content">
+        <div class="row grid">
+          {% for item in items %}
+          <div class="col-sm-6 col-lg-4 all {{ item.Category.Category_name|lower|slugify }}">
+            <div class="box">
+              <div>
+                <div class="img-box">
+                  {% if item.Image %}
+                  <img src="{{ item.Image.url }}" alt="{{ item.Item_name }}" class="img-fluid">
+                  {% else %}
+                  <div class="no-image">No image available</div>
+                  {% endif %}
+                </div>
+                <div class="detail-box">
+                  <h5>{{ item.Item_name }}</h5>
+                  <p>{{ item.description }}</p>
+                  <div class="options">
+                    <h6>RS{{ item.Price }}</h6>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% empty %}
+          <div class="col-12 text-center">
+            <p>No menu items available. Please add items in the admin panel.</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      
+      <!-- View More Button -->
+      <div class="btn-box">
+        <a href="{% url 'Book_Table' %}">
+          Book A Table
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Add this script for filtering functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterBtns = document.querySelectorAll('.filters_menu li');
+      const items = document.querySelectorAll('.grid .all');
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+          // Update active class
+          filterBtns.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Get filter value
+          const filter = this.getAttribute('data-filter');
+          
+          // Filter items
+          items.forEach(item => {
+            if (filter === '*') {
+              item.style.display = 'block';
+            } else {
+              if (item.classList.contains(filter.substring(1))) {
+                item.style.display = 'block';
+              } else {
+                item.style.display = 'none';
+              }
+            }
+          });
+        });
+      });
+    });
+  </script>
+{% endblock %}
